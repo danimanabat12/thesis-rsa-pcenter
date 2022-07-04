@@ -16,11 +16,12 @@ double upperBoundX;
 double lowerBoundX; 
 double upperBoundY;
 double lowerBoundY;
+int T;
 
 // Candidate solution vector
 vector < vector< vector<double> > > candidateSolution;
 
-// Temporary demand points. 
+// demand points. 
 vector<vector<double> > demandPointsVec;
 
 void initializeParameters(char* parameterSettingFile) {
@@ -42,6 +43,8 @@ void initializeParameters(char* parameterSettingFile) {
     lowerBoundX = fileContent.at(4); 
     upperBoundY = fileContent.at(5);
     lowerBoundY = fileContent.at(6);
+    T = fileContent.at(7);
+
     // Resize vector to numberOfReptiles and facilities.
     candidateSolution.resize(numberOfReptiles); 
     for(int i = 0; i < candidateSolution.size(); i++) {
@@ -56,6 +59,7 @@ void initializeParameters(char* parameterSettingFile) {
     cout << "Lowerbound X: " << lowerBoundX << endl;
     cout << "Upperbound Y: " << upperBoundY << endl;
     cout << "Lowerbound Y: " << lowerBoundY << endl;
+    cout << "Max iteration: " << T << endl;
 }
 
 void initializeDataset (char* parameterSettingFile) {
@@ -166,6 +170,63 @@ void findBest() {
         cout << "(" << candidateSolution[bestFitnessSolutionIndex][j].at(0) << ", " << candidateSolution[bestFitnessSolutionIndex][j].at(1) << ") ";
     }
     cout << "}\n" << endl;
+}
+
+double calculateES () {
+    double ES; 
+    return ES;
+}
+
+double calculateEta() {
+    double eta;
+    return eta;
+}
+
+double calculateReduceFunction() {
+    double R;
+    return R;
+}
+
+double calculatePercentageDifference() {
+    double P;
+    return P;
+}
+
+void rsaPcenter () {
+    int t = 1; 
+    double ES, eta, R, P; 
+
+    while (t <= T) {
+        // 1. Calculate Fitness function of each candidate solution
+        // 2. Find best solution and its fitness
+        // 3. Calculate ES
+        ES = calculateES();
+        for (int i = 0; i < numberOfReptiles < i++) {
+            for (int j = 0; j < facilities; j++) {
+                // 4. Calculate hunting op, reduce function, percentage diff
+                eta = calculateEta();
+                R = calculateReduceFunction();
+                P = calculatePercentageDifference();
+
+                // High walking
+                if (t <= T/4) {
+                    
+                } 
+                // Belly walking
+                else if (t <= (2*T/4) && t > T/4) {
+
+                }
+                // Hunting coordination
+                else if (t <= (3*T/4) && t > (2*T/4)) {
+
+                } 
+                // Hunting cooperation
+                else if (t <= T && t > (3*T/4)) {
+
+                }
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv) {
