@@ -30,10 +30,7 @@ void initializeSolution();
 void printSolution();
 double calculateDistance(double x1, double y1, double x2, double y2);
 double calculateFitness(int solutionIndex);
-
-double calculateFitness2(vector<vector<double> > thisSoln);
-// Temporary, for checking purposes only.
-double calculateFitness3();
+double calculateFitness2(vector<vector <double >> tempSolution);
 void findBest();
 double calculateES (double t);
 vector<double> calculateEta(int currentDim, vector<double> P);
@@ -54,12 +51,11 @@ int main(int argc, char** argv) {
 		initializeParameters(argv[1]);
 		initializeDataset(dataset);
 		for (int i = 0; i < numberOfRuns; i++) {
-			// calculateFitness3();
+			srand(time(0));
 			initializeSolution();
 			printSolution();
-			// Moved find best sa sulod sa rsaPcenter(). 
-			// findBest();
-			rsaPcenter();
+			findBest();
+			// rsaPcenter();
 			// findBest();
 			candidateSolution.clear();
 			candidateSolution.resize(numberOfReptiles); 
@@ -204,87 +200,43 @@ double calculateFitness(int solutionIndex) {
 						// Note: no need na mag store sa list ug i-take note ang index kay ang concern ra man is ang max jud which we can already optimize naman
 		for (int i = 0; i < demandPointsVec.size(); i++) {
 				// Initialize min as the distance between the current demand point and the first facility coordinate in the solution.
-				// cout << "Facility 1" << endl;
+				cout << "Facility 1" << endl;
 				min = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], candidateSolution[solutionIndex][0].at(0), candidateSolution[solutionIndex][0].at(1));
-				printf("%f\n", min); //CONTINUE HERE!!!!
+				//printf("%f\n", min); //CONTINUE HERE!!!!
 				for (int j = 1; j < facilities; j++) {
-						// cout << "Facility " << j+1 << endl;
+						cout << "Facility " << j+1 << endl;
 						distance = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], candidateSolution[solutionIndex][j].at(0), candidateSolution[solutionIndex][j].at(1));
-						printf("%f\n", distance);
+						// printf("%f\n", distance);
 						if (min > distance) {
 								min = distance; 
-								// printf("MINIMUM HAS BEEN REPLACED, NEW VAL: %f\n", min);
+								printf("MINIMUM HAS BEEN REPLACED, NEW VAL: %f\n", min);
 						}
 				}
-				printf("MIN: %f\n", min);
 				// Max holds the maximum of all distances from a demand point to a facility.
 				if (min > max) {
 					max = min; 
-					// printf("MAX HAS BEEN REPLACED, NEW VAL: %f\n", max);
+					printf("MAX HAS BEEN REPLACED, NEW VAL: %f\n", max);
 				}
 		}
 		return max;
 		// outer min - dili na siya included sa calculate fitness, pero bale pangitaon nato ang set of facility nga naka-produce og smallest distance/fitness value.
 }
 
-double calculateFitness2(vector<vector<double> > thisSoln) {
+double calculateFitness2(vector<vector <double >> tempSolution ) {
 		double distance;
 		double min; 
 		double max = 0;
-		// inner min - Buhaton is: per demand point, pangitaon nato ang nearest facility sa iyaha given a set of facility (located by index)
-		// max - Pangitaon nato ang demand point with the farthest minimum distance jud. 
-				// Approach: 
-						// 1. Mag for loop ko, iterating each demand point, then i-calculate nako ang distance niya with all the given position sa solution
-						// 2. Pangitaon nako ang min distance with its corresponding position index (facility)
-						// 3. After ma-determine ang min distance, i-compare it with max para isahan na lang
-						// 4. Return max as the fitness value.
-						// Note: no need na mag store sa list ug i-take note ang index kay ang concern ra man is ang max jud which we can already optimize naman
+
 		for (int i = 0; i < demandPointsVec.size(); i++) {
-				// Initialize min as the distance between the current demand point and the first facility coordinate in the solution.
-				// cout << "Facility 1" << endl;
-				min = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], thisSoln[0].at(0), thisSoln[0].at(1));
-				printf("%f\n", min); //CONTINUE HERE!!!!
+				min = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], tempSolution[0].at(0), tempSolution[0].at(1));
 				for (int j = 1; j < facilities; j++) {
-						// cout << "Facility " << j+1 << endl;
-						distance = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], thisSoln[j].at(0), thisSoln[j].at(1));
-						printf("%f\n", distance);
-						if (min > distance) {
-								min = distance; 
-								// printf("MINIMUM HAS BEEN REPLACED, NEW VAL: %f\n", min);
-						}
-				}
-				printf("MIN: %f\n", min);
-				// Max holds the maximum of all distances from a demand point to a facility.
-				if (min > max) {
-					max = min; 
-					// printf("MAX HAS BEEN REPLACED, NEW VAL: %f\n", max);
-				}
-		}
-		return max;
-		// outer min - dili na siya included sa calculate fitness, pero bale pangitaon nato ang set of facility nga naka-produce og smallest distance/fitness value.
-}
-
-// param: vector<vector <double >> tempSolution
-double calculateFitness3() {
-		double distance;
-		double min; 
-		double max = 0;
-		double tempDemandPoints[10][2] = {10,76,30,76,40,70,21,24,65,90,38,19,20,70,13,65,10,63,60,55}; 
-		double facility[3][2]={20,80,59,75,48,21};
-
-		cout << "FACILITY[7]: " << facility[0][0] << " " << facility[0][1] << endl;
-		for (int i = 0; i < 10; i++) {
-				min = calculateDistance(tempDemandPoints[i][0], tempDemandPoints[i][1], facility[0][0], facility[0][1]);
-				for (int j = 1; j < 3; j++) {
-						distance = calculateDistance(tempDemandPoints[i][0], tempDemandPoints[i][1], facility[j][0], facility[j][1]);
+						distance = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], tempSolution[j].at(0), tempSolution[j].at(1));
 						if (min > distance) {
 								min = distance; 
 						}
 				}
-				printf("MIN: %f\n", min);
 				if (min > max) max = min; 
 		}
-		printf("%f", max);
 		return max;
 }
 
@@ -300,7 +252,7 @@ void findBest() {
 		// Initialize bestFitness with the fitness value of the first solution.
 		bestFitness = calculateFitness(0);
 		bestFitnessSolutionIndex = 0;
-		// cout << "\n===================================" << endl;
+		cout << "\n===================================" << endl;
 		printf("FITNESS VALUE OF REPTILE[1]: %f\n", bestFitness);
 		for (int i = 1; i < numberOfReptiles; i++) {
 				currentFitness = calculateFitness(i);
@@ -325,8 +277,6 @@ void findBest() {
 }
 
 void rsaPcenter () {
-		cout << "\nRSA START!" << endl;
-		cout << "========================================" << endl;
 		int t = 1, r1; 
 		// Variables: vector or double? 
 		// ES - double kay single value ra ni
@@ -334,9 +284,6 @@ void rsaPcenter () {
 		double ES;
 		vector<double> eta, R, P;
 		vector<vector <double > > xNew; 
-		vector<double > generationBestFitnessValues;
-		double generationBestFitness;
-		double xNewBestFitness;
 		xNew.resize(facilities);
 
 		while (t <= T) {
@@ -344,10 +291,8 @@ void rsaPcenter () {
 				// 2. Find best solution and its fitness
 				// 3. Calculate ES
 				//ADD BEST FITNESS FUNCTION HERE.
-				findBest();
 				ES = calculateES(t);
 				for (int i = 0; i < numberOfReptiles; i++) {
-						
 						// cout << "Current solution: {"; 
 						// for (int j = 0; j < facilities; j++) {
 						// 	cout << "[" << candidateSolution[i][j].at(0) << ", " << candidateSolution[i][j].at(1) << "] ";
@@ -360,12 +305,12 @@ void rsaPcenter () {
 						xNew.clear();
 						xNew.resize(facilities);
 						for (int j = 0; j < facilities; j++) {
-								// cout << "TEST1" << endl;
 								// 4. Calculate hunting op, reduce function, percentage diff
                 // Im doing this incorrectly....
 								R = calculateReduceFunction(j);
 								P = calculatePercentageDifference(i, j);
 								eta = calculateEta(j, P);
+
 								// High walking
 								if (t <= T/4) {
 										double var1 = bestSoln[j].at(0);
@@ -422,26 +367,17 @@ void rsaPcenter () {
 						// cout << "}" << endl;
 						// printf("Calculate fitness of Solution %d: %f\n", i, calculateFitness(i));
 						// printf("Calculate fitness of xNew: %f\n===========\n", calculateFitness2(xNew));
-						generationBestFitness = calculateFitness2(bestSoln);
-						xNewBestFitness = calculateFitness2(xNew);
-						if (calculateFitness(i) > xNewBestFitness) {
-							// cout << "Check 1" << endl;
-							candidateSolution[i] = xNew;				
-							if (generationBestFitness > xNewBestFitness) {
+						if (calculateFitness(i) > calculateFitness2(xNew)) {
+							cout << "Check 1" << endl;
+							candidateSolution[i] = xNew;							
+							if (calculateFitness2(bestSoln) > calculateFitness2(xNew)) {
 								bestSoln = xNew;
-								generationBestFitness = xNewBestFitness;
 							}
-							// cout << "Check 2" << endl;
+							cout << "Check 2" << endl;
 						}
 						// cout << "Check?" << endl;
 				}
-				generationBestFitnessValues.push_back(generationBestFitness);
 				t++;
-		}
-
-		cout << "GENERATION BEST FITNESSES" << endl;
-		for (int k = 0; k < T; k++) {
-			printf("%d: %f\n", k, generationBestFitnessValues.at(k));
 		}
 }
 
@@ -465,7 +401,7 @@ int generateRandomSolIndex() {
 		// Change rand
 		random_device rd;
     mt19937 mt(rd());
-    uniform_int_distribution<int> dist(0, numberOfReptiles-1);
+    uniform_int_distribution<int> dist(0, numberOfReptiles);
 		return dist(mt);
 }
 
@@ -478,6 +414,7 @@ vector<double> calculateReduceFunction(int currentDim) {
 }
 
 vector<double> calculateXAverage(int currentSol) {
+		// Overhaul!!
 		vector<double> M;
 		double xAve = 0, yAve = 0;
 		for (int i = 0; i < facilities; i++) {
