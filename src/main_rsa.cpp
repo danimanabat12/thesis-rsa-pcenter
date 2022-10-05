@@ -21,6 +21,8 @@ vector < vector< vector<double> > > candidateSolution;
 vector<vector<double> > demandPointsVec;
 // Vector containing the best obtained solution so far
 vector<vector<double> > bestSoln;
+// 
+double epsilon = 0.0001;
 
 // Function prototype
 void initializeParameters(char* parameterSettingFile);
@@ -39,7 +41,7 @@ double calculateES (double t);
 vector<double> calculateEta(int currentDim, vector<double> P);
 int generateRandomSolIndex();
 vector<double> calculateReduceFunction(int currentDim);
-vector<double> calculateXAverage(int currentSol);
+vector<double> calculateXYAverage(int currentSol);
 vector<double> calculatePercentageDifference(int currentSol, int currentDim);
 void rsaPcenter ();
 
@@ -162,7 +164,7 @@ void initializeParameters(char* parameterSettingFile) {
 double generateRandom() {
 	random_device rd;
   mt19937 mt(rd());
-  uniform_real_distribution<double> dist(0.0, 1.0+std::numeric_limits<double>::epsilon());
+  uniform_real_distribution<double> dist(0.0, 1.0+epsilon);
 	return dist(mt);
 }
 
@@ -206,17 +208,17 @@ double calculateFitness(int solutionIndex) {
 				// Initialize min as the distance between the current demand point and the first facility coordinate in the solution.
 				// cout << "Facility 1" << endl;
 				min = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], candidateSolution[solutionIndex][0].at(0), candidateSolution[solutionIndex][0].at(1));
-				printf("%f\n", min); //CONTINUE HERE!!!!
+				// printf("%f\n", min); //CONTINUE HERE!!!!
 				for (int j = 1; j < facilities; j++) {
 						// cout << "Facility " << j+1 << endl;
 						distance = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], candidateSolution[solutionIndex][j].at(0), candidateSolution[solutionIndex][j].at(1));
-						printf("%f\n", distance);
+						// printf("%f\n", distance);
 						if (min > distance) {
 								min = distance; 
 								// printf("MINIMUM HAS BEEN REPLACED, NEW VAL: %f\n", min);
 						}
 				}
-				printf("MIN: %f\n", min);
+				// printf("MIN: %f\n", min);
 				// Max holds the maximum of all distances from a demand point to a facility.
 				if (min > max) {
 					max = min; 
@@ -227,6 +229,7 @@ double calculateFitness(int solutionIndex) {
 		// outer min - dili na siya included sa calculate fitness, pero bale pangitaon nato ang set of facility nga naka-produce og smallest distance/fitness value.
 }
 
+// Another variant of calculateFitness where the parameter is a vector instead of an index.
 double calculateFitness2(vector<vector<double> > thisSoln) {
 		double distance;
 		double min; 
@@ -243,17 +246,17 @@ double calculateFitness2(vector<vector<double> > thisSoln) {
 				// Initialize min as the distance between the current demand point and the first facility coordinate in the solution.
 				// cout << "Facility 1" << endl;
 				min = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], thisSoln[0].at(0), thisSoln[0].at(1));
-				printf("%f\n", min); //CONTINUE HERE!!!!
+				// printf("%f\n", min); //CONTINUE HERE!!!!
 				for (int j = 1; j < facilities; j++) {
 						// cout << "Facility " << j+1 << endl;
 						distance = calculateDistance(demandPointsVec[i][0], demandPointsVec[i][1], thisSoln[j].at(0), thisSoln[j].at(1));
-						printf("%f\n", distance);
+						// printf("%f\n", distance);
 						if (min > distance) {
 								min = distance; 
 								// printf("MINIMUM HAS BEEN REPLACED, NEW VAL: %f\n", min);
 						}
 				}
-				printf("MIN: %f\n", min);
+				// printf("MIN: %f\n", min);
 				// Max holds the maximum of all distances from a demand point to a facility.
 				if (min > max) {
 					max = min; 
@@ -264,7 +267,7 @@ double calculateFitness2(vector<vector<double> > thisSoln) {
 		// outer min - dili na siya included sa calculate fitness, pero bale pangitaon nato ang set of facility nga naka-produce og smallest distance/fitness value.
 }
 
-// param: vector<vector <double >> tempSolution
+// Temporary, delete function once done.
 double calculateFitness3() {
 		double distance;
 		double min; 
@@ -308,16 +311,16 @@ void findBest() {
 				if (bestFitness > currentFitness) {
 						bestFitness = currentFitness; 
 						bestFitnessSolutionIndex = i;
-						cout << "BEST FITNESS UPDATED" << endl;
+						// cout << "BEST FITNESS UPDATED" << endl;
 				}
 		}
-		cout << "\n===========" << endl; 
-		cout << "BEST FITNESS VALUE: ";
-		printf("%f \n", bestFitness);
-		cout << "BEST SOLUTION: ";
-		cout << "rPn[" << bestFitnessSolutionIndex+1 << "] = { ";  
+		// cout << "\n===========" << endl; 
+		// cout << "BEST FITNESS VALUE: ";
+		// printf("%f \n", bestFitness);
+		// cout << "BEST SOLUTION: ";
+		// cout << "rPn[" << bestFitnessSolutionIndex+1 << "] = { ";  
 		for (int j = 0; j < facilities; j++)  {
-				printf("(%f, %f) ", candidateSolution[bestFitnessSolutionIndex][j].at(0), candidateSolution[bestFitnessSolutionIndex][j].at(1));
+				// printf("(%f, %f) ", candidateSolution[bestFitnessSolutionIndex][j].at(0), candidateSolution[bestFitnessSolutionIndex][j].at(1));
         bestSoln[j].push_back(candidateSolution[bestFitnessSolutionIndex][j].at(0));
         bestSoln[j].push_back(candidateSolution[bestFitnessSolutionIndex][j].at(1));
 		}
@@ -328,9 +331,6 @@ void rsaPcenter () {
 		cout << "\nRSA START!" << endl;
 		cout << "========================================" << endl;
 		int t = 1, r1; 
-		// Variables: vector or double? 
-		// ES - double kay single value ra ni
-		// eta, R, and P - these should be vector kay dapat coordinate system man ang gamit 
 		double ES;
 		vector<double> eta, R, P;
 		vector<vector <double > > xNew; 
@@ -342,30 +342,23 @@ void rsaPcenter () {
 		while (t <= T) {
 				// 1. Calculate Fitness function of each candidate solution
 				// 2. Find best solution and its fitness
-				// 3. Calculate ES
-				//ADD BEST FITNESS FUNCTION HERE.
 				findBest();
+				// 3. Calculate ES
 				ES = calculateES(t);
 				for (int i = 0; i < numberOfReptiles; i++) {
-						
-						// cout << "Current solution: {"; 
-						// for (int j = 0; j < facilities; j++) {
-						// 	cout << "[" << candidateSolution[i][j].at(0) << ", " << candidateSolution[i][j].at(1) << "] ";
-						// }
-						// cout << "\nBest solution: {";
-						// for (int j = 0; j < facilities; j++) {
-						// 	cout << "[" << bestSoln[j].at(0) << ", " <<  bestSoln[j].at(1) << "] ";
-						// }
-						// cout << "}" << endl;
+						cout << "Reptile #" << i+1 << endl;
 						xNew.clear();
 						xNew.resize(facilities);
 						for (int j = 0; j < facilities; j++) {
-								// cout << "TEST1" << endl;
+								cout << "Facility #" << j+1 << endl;
 								// 4. Calculate hunting op, reduce function, percentage diff
-                // Im doing this incorrectly....
 								R = calculateReduceFunction(j);
 								P = calculatePercentageDifference(i, j);
 								eta = calculateEta(j, P);
+								// cout << setprecision(0) << P.at(0) << " " << P.at(1) << endl;
+								printf("R: %f, %f\n, P: %e, %e\n, Eta: %f, %f\n", R.at(0), R.at(1), P.at(0), P.at(1), eta.at(0), eta.at(1));
+
+								// CONTINUE HERE!!!
 								// High walking
 								if (t <= T/4) {
 										double var1 = bestSoln[j].at(0);
@@ -373,20 +366,8 @@ void rsaPcenter () {
 										double var3 =  beta; 
 										double var4 = R.at(0);
 										double var5 = generateRandom();
-                		// double temp_1 = bestSoln[j].at(0) - (eta.at(0)) * beta - R.at(0) * generateRandom();
-										// double temp_2 = bestSoln[j].at(1) * (eta.at(1) * -1) * beta - R.at(1) * generateRandom();
 										xNew[j].push_back(bestSoln[j].at(0) - eta.at(0) * beta - R.at(0) * var5);
 										xNew[j].push_back(bestSoln[j].at(1) - eta.at(1) * beta - R.at(1) * var5);
-										// cout << "HIGH WALKING: (" << temp_1 << ", " << temp_2 << ")" << endl;
-										// cout << "bestSoln: " << var1 << endl;
-										// cout << "Eta: " << var2 << endl;
-										// cout << "Beta: " << var3 << endl;
-										// cout << "Reduce function: " << var4 << endl;
-										// cout << "Rand: " << var5 << endl;
-										// cout << "P: " << P.at(0) << endl;
-										// cout << "Resulting: " << xNew[j].at(0) << endl;
-										// cout << "===========================" << endl;
-										// Expectation: Coordinate ang result ani.
 								} 
 								// Belly walking
 								else if (t <= (2*T/4) && t > T/4) {
@@ -404,8 +385,8 @@ void rsaPcenter () {
 								// Hunting cooperation
 								else if (t <= T && t > (3*T/4)) {
 										double var = generateRandom(); 
-										xNew[j].push_back(bestSoln[j].at(0) - eta.at(0) * std::numeric_limits<double>::epsilon() - R.at(0) * var);
-										xNew[j].push_back(bestSoln[j].at(1) - eta.at(1) * std::numeric_limits<double>::epsilon() - R.at(1) * var);
+										xNew[j].push_back(bestSoln[j].at(0) - eta.at(0) * epsilon - R.at(0) * var);
+										xNew[j].push_back(bestSoln[j].at(1) - eta.at(1) * epsilon - R.at(1) * var);
 								}
 								// cout << t << " " << i << " " << j << endl;
 								R.clear();
@@ -413,36 +394,24 @@ void rsaPcenter () {
 								eta.clear();
 								// cout << "CLEARED" << endl;
 						}
-
-						// cout << "Xnew: {"; 
-						// for (int k = 0; k < xNew.size(); k++) {
-						// 	// cout << xNew[k].at(0) << ", " << xNew[k].at(1) << "]";
-						// 	printf("[%f, %f] ", xNew[k].at(0), xNew[k].at(1));
-						// }
-						// cout << "}" << endl;
-						// printf("Calculate fitness of Solution %d: %f\n", i, calculateFitness(i));
-						// printf("Calculate fitness of xNew: %f\n===========\n", calculateFitness2(xNew));
 						generationBestFitness = calculateFitness2(bestSoln);
 						xNewBestFitness = calculateFitness2(xNew);
 						if (calculateFitness(i) > xNewBestFitness) {
-							// cout << "Check 1" << endl;
 							candidateSolution[i] = xNew;				
 							if (generationBestFitness > xNewBestFitness) {
 								bestSoln = xNew;
 								generationBestFitness = xNewBestFitness;
 							}
-							// cout << "Check 2" << endl;
 						}
-						// cout << "Check?" << endl;
 				}
 				generationBestFitnessValues.push_back(generationBestFitness);
 				t++;
 		}
 
-		cout << "GENERATION BEST FITNESSES" << endl;
-		for (int k = 0; k < T; k++) {
-			printf("%d: %f\n", k, generationBestFitnessValues.at(k));
-		}
+		// cout << "GENERATION BEST FITNESSES" << endl;
+		// for (int k = 0; k < T; k++) {
+		// 	printf("%d: %f\n", k, generationBestFitnessValues.at(k));
+		// }
 }
 
 double calculateES (double t) {
@@ -472,12 +441,12 @@ int generateRandomSolIndex() {
 vector<double> calculateReduceFunction(int currentDim) {
 		int r2 = generateRandomSolIndex();
 		vector<double> R;
-		R.push_back((bestSoln[currentDim].at(0) - candidateSolution[r2][currentDim].at(0)) / (bestSoln[currentDim].at(0) + std::numeric_limits<double>::epsilon()));
-		R.push_back((bestSoln[currentDim].at(1) - candidateSolution[r2][currentDim].at(1)) / (bestSoln[currentDim].at(1) + std::numeric_limits<double>::epsilon()));
+		R.push_back((bestSoln[currentDim].at(0) - candidateSolution[r2][currentDim].at(0)) / (bestSoln[currentDim].at(0) + epsilon));
+		R.push_back((bestSoln[currentDim].at(1) - candidateSolution[r2][currentDim].at(1)) / (bestSoln[currentDim].at(1) + epsilon));
 		return R;
 }
 
-vector<double> calculateXAverage(int currentSol) {
+vector<double> calculateXYAverage(int currentSol) {
 		vector<double> M;
 		double xAve = 0, yAve = 0;
 		for (int i = 0; i < facilities; i++) {
@@ -498,14 +467,21 @@ vector<double> calculatePercentageDifference(int currentSol, int currentDim) {
     x_ij.push_back(candidateSolution[currentSol][currentDim].at(0)); 
 		x_ij.push_back(candidateSolution[currentSol][currentDim].at(1)); 
 		// printf("X_ij: (%f, %f)\n", x_ij.at(0), x_ij.at(1));
-    M = calculateXAverage(currentSol);
+    M = calculateXYAverage(currentSol);
+		printf("M: %f, %f\n", M.at(0), M.at(1));
     bestJ.push_back(bestSoln[currentDim].at(0));
 		bestJ.push_back(bestSoln[currentDim].at(1));
 		// printf("Best_J: (%f, %f)\n", bestJ.at(0), bestJ.at(1));
-		// double numerator = (x_ij.at(0) - M.at(0));
-		// double denominator = ((bestJ.at(0) * (upperBoundX - lowerBoundX)) + std::numeric_limits<double>::epsilon());
-    P.push_back(alpha + ((x_ij.at(0) - M.at(0)) / ((bestJ.at(0) * (upperBoundX - lowerBoundX)) + std::numeric_limits<double>::epsilon())));
-		P.push_back(alpha + ((x_ij.at(1) - M.at(1)) / ((bestJ.at(1) * (upperBoundY - lowerBoundY)) + std::numeric_limits<double>::epsilon())));
+		double numeratorX = (x_ij.at(0) - M.at(0));
+		double numeratorY = (x_ij.at(1) - M.at(1));
+		double denominatorX = ((bestJ.at(0) * (upperBoundX - lowerBoundX)) + epsilon);
+		double denominatorY = ((bestJ.at(1) * (upperBoundY - lowerBoundY)) + epsilon);
+		printf("Bounds of X: %f, %f\n", lowerBoundX, upperBoundX);
+		printf("Bounds of Y: %f, %f\n", lowerBoundY, upperBoundY);
+		printf("Best: %f, %f\n", bestJ.at(0), bestJ.at(1));
+		printf("Numerator: %f, %f Denominator: %f, %f\n", numeratorX, numeratorY, denominatorX, denominatorY);
+    P.push_back(alpha + ((x_ij.at(0) - M.at(0)) / ((bestJ.at(0) * (upperBoundX - lowerBoundX)) + epsilon)));
+		P.push_back(alpha + ((x_ij.at(1) - M.at(1)) / ((bestJ.at(1) * (upperBoundY - lowerBoundY)) + epsilon)));
 		// printf("Numerator: %f\n", numerator);
 		// printf("Denominator: %f\n", denominator);
 		// printf("Epsilon: %f\n", std::numeric_limits<double>::epsilon());

@@ -43,26 +43,26 @@ void rsaPcenter ();
 // Main function
 int main(int argc, char** argv) {
 
-		// Read from command line. 
-		if (argc < 2 || argc > 2) {
-				cout << "Usage: " << argv[0] << " <Parameter-settings.txt>" << endl;
-				return 0;
-		}
-		initializeParameters(argv[1]);
-		initializeDataset(dataset);
-		for (int i = 0; i < numberOfRuns; i++) {
-			srand(time(0));
-			initializeSolution();
-			printSolution();
-			findBest();
-			// rsaPcenter();
-			// findBest();
-			candidateSolution.clear();
-			candidateSolution.resize(numberOfReptiles); 
-			for(int i = 0; i < candidateSolution.size(); i++) {
-					candidateSolution[i].resize(facilities);
-			}
-		}
+		// // Read from command line. 
+		// if (argc < 2 || argc > 2) {
+		// 		cout << "Usage: " << argv[0] << " <Parameter-settings.txt>" << endl;
+		// 		return 0;
+		// }
+		// initializeParameters(argv[1]);
+		// initializeDataset(dataset);
+		// for (int i = 0; i < numberOfRuns; i++) {
+		// 	srand(time(0));
+		// 	initializeSolution();
+		// 	printSolution();
+		// 	findBest();
+		// 	// rsaPcenter();
+		// 	// findBest();
+		// 	candidateSolution.clear();
+		// 	candidateSolution.resize(numberOfReptiles); 
+		// 	for(int i = 0; i < candidateSolution.size(); i++) {
+		// 			candidateSolution[i].resize(facilities);
+		// 	}
+		// }
 }
 
 // Location na lang ang ipasa. Conditional statement for X and Y
