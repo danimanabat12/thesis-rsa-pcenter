@@ -1,7 +1,0 @@
-numberOfReptiles 5
-facilities 6
-T 4
-numberOfRuns 1
-alpha 0.1
-beta 0.1
-dataset 2
