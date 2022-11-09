@@ -27,6 +27,7 @@ double epsilon = 0.0001;
 int currRun = 0;
 
 // Save data mechanism
+string paramsFileName;
 vector <double> runTime;
 vector < vector< double> > bestFitTime;
 vector < vector< double> > generationBestFitnesses;
@@ -62,6 +63,9 @@ int main(int argc, char** argv) {
 				return 0;
 		}
 		
+		paramsFileName = argv[1];
+		paramsFileName = paramsFileName.substr(0, paramsFileName.find('.'));
+		cout << paramsFileName << endl;
 		// Initialize parameters and datasets
 		initializeParameters(argv[1]);
 		initializeDataset(dataset);
@@ -81,11 +85,6 @@ int main(int argc, char** argv) {
 					candidateSolution[j].resize(facilities);
 			}
 			currRun++;
-			// End time per run
-			
-			// filename = "RSA" + to_string(i) + "_RunTime.csv";
-			// ofstream out(filename);
-			// out << to_string(chrono::duration <double> (duration).count());
 			runTime.push_back(chrono::duration <double> (duration).count());
 		}
 
@@ -472,13 +471,13 @@ vector<double> calculatePercentageDifference(int currentSol, int currentDim) {
 }
 
 void resultsToCsv() {
-	ofstream runtime("RSA_RunTime.csv");
-	ofstream initBestX("RSA_InitBestX.csv");
-	ofstream initBestY("RSA_InitBestY.csv");
-	ofstream finalBestX("RSA_FinalBestX.csv");
-	ofstream finalBestY("RSA_FinalBestY.csv");
-	ofstream bestTime("RSA_BestFitTime.csv");
-	ofstream bestFitnesses("RSA_GenerationBestFitnesses.csv");
+	ofstream runtime(paramsFileName + "_RSA_RunTime.csv");
+	ofstream initBestX(paramsFileName + "_RSA_InitBestX.csv");
+	ofstream initBestY(paramsFileName + "_RSA_InitBestY.csv");
+	ofstream finalBestX(paramsFileName + "_RSA_FinalBestX.csv");
+	ofstream finalBestY(paramsFileName + "_RSA_FinalBestY.csv");
+	ofstream bestTime(paramsFileName + "_RSA_BestFitTime.csv");
+	ofstream bestFitnesses(paramsFileName + "_RSA_GenerationBestFitnesses.csv");
 
 	// Output file for run time, initial best solutions, and final best solutions
 	for (int i = 0; i < runTime.size(); i++) {
