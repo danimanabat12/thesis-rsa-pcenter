@@ -71,11 +71,11 @@ int main(int argc, char** argv) {
 		initializeDataset(dataset);
 		
 		for (int i = 1; i <= numberOfRuns; i++) {
-			cout << "========================RUN " << i << "=========================\n" << endl;
+			cout << "RUN " << i << endl;
 			// Start time per run
 			auto start = chrono::steady_clock::now();
 			initializeSolution();
-			printSolution();
+			// printSolution();
 			rsaPcenter();
 			auto end = chrono::steady_clock::now();
 			auto duration = end - start;
@@ -136,8 +136,8 @@ void initializeDataset (int dataset) {
   }
   datasetX.close();
   datasetY.close();
-  printf("X-coordinate bounds: [%f, %f]\n", lowerBoundX, upperBoundX);
-  printf("Y-coordinate bounds: [%f, %f]\n", lowerBoundY, upperBoundY);
+  // printf("X-coordinate bounds: [%f, %f]\n", lowerBoundX, upperBoundX);
+  // printf("Y-coordinate bounds: [%f, %f]\n", lowerBoundY, upperBoundY);
 }
 
 void initializeParameters(char* parameterSettingFile) {
@@ -169,14 +169,14 @@ void initializeParameters(char* parameterSettingFile) {
 		}
 		bestSoln.resize(facilities);
 
-		cout << "\nPARAMETERS\n============================"<< endl;
-		cout << "Number of reptiles (solution): " << numberOfReptiles << endl;
-		cout << "Number of facilities (dimension): " << facilities << endl;
-		cout << "Max iteration: " << T << endl;
-		cout << "Number of runs: " << numberOfRuns << endl;
-		cout << "Alpha: " << alpha << endl;
-		cout << "Beta: " << beta << endl;
-		cout << "Dataset: " << (dataset == 1 ? "Davao" : (dataset == 2 ? "Digos" : "Tagum")) << endl;
+		// cout << "\nPARAMETERS\n============================"<< endl;
+		// cout << "Number of reptiles (solution): " << numberOfReptiles << endl;
+		// cout << "Number of facilities (dimension): " << facilities << endl;
+		// cout << "Max iteration: " << T << endl;
+		// cout << "Number of runs: " << numberOfRuns << endl;
+		// cout << "Alpha: " << alpha << endl;
+		// cout << "Beta: " << beta << endl;
+		// cout << "Dataset: " << (dataset == 1 ? "Davao" : (dataset == 2 ? "Digos" : "Tagum")) << endl;
 }
 
 double generateRandom() {
@@ -258,10 +258,10 @@ void findBest() {
 		bestFitness = calculateFitness(0);
 		bestFitnessSolutionIndex = 0;
 
-		printf("FITNESS VALUE OF REPTILE[1]: %f\n", bestFitness);
+		// printf("FITNESS VALUE OF REPTILE[1]: %f\n", bestFitness);
 		for (int i = 1; i < numberOfReptiles; i++) {
 				currentFitness = calculateFitness(i);
-				printf("FITNESS VALUE OF REPTILE[%i]: %f\n", i+1, currentFitness);
+				// printf("FITNESS VALUE OF REPTILE[%i]: %f\n", i+1, currentFitness);
 				if (bestFitness > currentFitness) {
 						bestFitness = currentFitness; 
 						bestFitnessSolutionIndex = i;
@@ -273,13 +273,13 @@ void findBest() {
         bestSoln[j].push_back(candidateSolution[bestFitnessSolutionIndex][j].at(0));
         bestSoln[j].push_back(candidateSolution[bestFitnessSolutionIndex][j].at(1));
 		}
-		cout << "}" << endl;
-		printf("Best fitness: %f\n\n", bestFitness);
+		// cout << "}" << endl;
+		// printf("Best fitness: %f\n\n", bestFitness);
 }
 
 void rsaPcenter() {
-		cout << "\nRSA START!" << endl;
-		cout << "========================================" << endl;
+		// cout << "\nRSA START!" << endl;
+		// cout << "========================================" << endl;
 		int t = 0, r1; 
 		double ES;
 		vector<double> eta, R, P;
@@ -298,15 +298,15 @@ void rsaPcenter() {
 
 		initBests.push_back(bestSoln);
 
-		cout << "Initial Best = {";
-		for (int i = 0; i < bestSoln.size(); i++) {
-				printf("(%f, %f) ", bestSoln[i].at(0), bestSoln[i].at(1));
-		}
-		cout << "}" << endl;
-		printf("Fitness value: %f\n\n", calculateFitness2(bestSoln));
-
+		// cout << "Initial Best = {";
+		// for (int i = 0; i < bestSoln.size(); i++) {
+		// 		printf("(%f, %f) ", bestSoln[i].at(0), bestSoln[i].at(1));
+		// }
+		// cout << "}" << endl;
+		// printf("Fitness value: %f\n\n", calculateFitness2(bestSoln));
+		cout << "Generation ";
 		while (t <= T) {
-				cout << "Generation " << t << endl;
+				cout << t << " ";
 				findBest();
 				ES = calculateES(t);
 				generationBestFitness = calculateFitness2(bestSoln);
@@ -379,44 +379,11 @@ void rsaPcenter() {
 				generationBestFitnessValues.push_back(generationBestFitness);
 				t++;
 		}
+		cout << "\n";
 		bestFitTime.push_back(thisBestFitTime);
 		generationBestFitnesses.push_back(generationBestFitnessValues);
 		finalBests.push_back(bestSoln);
 
-		// for (int i = 0; i < generationBestFitnesses[currRun].size(); i++) {
-		// 	cout << generationBestFitnesses[currRun][i] << endl;
-		// }
-
-		// ofstream bestFitTime("RSA" + to_string(currRun) + "_BestFitTime.csv");
-		// for (int i = 0; i < bestFitnessTimestamps.size(); i++) {
-		// 	bestFitTime << to_string(bestFitnessTimestamps.at(i)) << "\n";
-		// }
-		
-		// ofstream genBestFit("RSA" + to_string(currRun) + "_GenerationBestFitnesses.csv");
-		// for (int i = 0; i < generationBestFitnessValues.size(); i++) {
-		// 	genBestFit << to_string(generationBestFitnessValues.at(i)) << "\n";
-		// }
-
-		// ofstream initBestX("RSA" + to_string(currRun) + "_initBestX.csv");
-		// ofstream initBestY("RSA" + to_string(currRun) + "_initBestY.csv");
-		// ofstream finalBestX("RSA" + to_string(currRun) + "_finalBestX.csv");
-		// ofstream finalBestY("RSA" + to_string(currRun) + "_finalBestY.csv");
-		// for (int i = 0; i < facilities; i++) {
-		// 	initBestX << to_string(generationBestSolutions[0][i].at(0)) << ",";
-		// 	initBestY << to_string(generationBestSolutions[0][i].at(1)) << ",";
-		// 	finalBestX << to_string(generationBestSolutions[generationBestSolutions.size()-1][i].at(0)) << ",";
-		// 	finalBestY << to_string(generationBestSolutions[generationBestSolutions.size()-1][i].at(1)) << ",";
-		// }
-
-		// for (int i = 0; i < generationBestSolutions.size(); i++) {
-		// 		cout << "Generation[" << i+1 << "] = {";
-		// 		for (int j = 0; j < facilities; j++)  {
-		// 				printf("(%f, %f) ", generationBestSolutions[i][j].at(0), generationBestSolutions[i][j].at(1));
-		// 		}
-		// 		cout << "}" << endl;
-		// 		printf("Fitness value: %f\n\n", generationBestFitnessValues.at(i));
-		// 		// printf("Timestamp: %f\n", bestFitnessTimestamps.at(i));
-		// }
 } 
 
 double calculateES (double t) {
@@ -483,10 +450,11 @@ void resultsToCsv() {
 	for (int i = 0; i < runTime.size(); i++) {
 		runtime << runTime.at(i);
 		for (int j = 0; j < finalBests.at(i).size(); j++) {
-				initBestX << initBests[i][j][0];
-				initBestY << initBests[i][j][1];
-				finalBestX << finalBests[i][j][0];
-				finalBestY << finalBests[i][j][1];
+				initBestX << fixed << initBests[i][j][0];
+				initBestY << fixed << initBests[i][j][1];
+				finalBestX << fixed << finalBests[i][j][0];
+				finalBestY << fixed << finalBests[i][j][1];
+				// printf("%f\n", initBests[i][j][0]);
 				if (j != finalBests.at(i).size()-1) {
 					initBestX << ",";
 					initBestY << ",";
@@ -502,15 +470,17 @@ void resultsToCsv() {
 			runtime << "\n";
 		}
 	}
+	// printf("%f", initBests[0][0][0]); 
 
 	// Output file for generation best fitnesses and best fitness time
 	for (int i = 0; i < bestFitTime.at(0).size(); i++) {
 		for (int j = 0; j < bestFitTime.size(); j++) {
 			bestTime << bestFitTime[j][i];
 			bestFitnesses << generationBestFitnesses[j][i];
+			// Resolved the error from the last meeting where the first value repeats. 
 			if (j != bestFitTime.size()-1) {
-				bestTime << bestFitTime[j][i] << ",";
-				bestFitnesses << generationBestFitnesses[j][i] << ",";
+				bestTime << ",";
+				bestFitnesses << ",";
 			}
 		}
 		if (i != bestFitTime.at(0).size() - 1) {
