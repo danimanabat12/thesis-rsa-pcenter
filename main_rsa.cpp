@@ -29,10 +29,12 @@ int currRun = 0;
 // Save data mechanism
 string paramsFileName;
 vector <double> runTime;
+vector <double> averageFitnesses;
 vector < vector< double> > bestFitTime;
 vector < vector< double> > generationBestFitnesses;
 vector < vector< vector <double> > > initBests;
 vector < vector< vector <double> > > finalBests;
+vector < vector< int> > rsaPhasesIncrementation;
 
 
 // Function prototype
@@ -281,11 +283,12 @@ void rsaPcenter() {
 		// cout << "\nRSA START!" << endl;
 		// cout << "========================================" << endl;
 		int t = 0, r1; 
-		double ES;
+		double ES, averageFitness = 0;
 		vector<double> eta, R, P;
 		vector<vector <double > > xNew; 
 		vector<double> generationBestFitnessValues;
 		vector<double> thisBestFitTime;
+		vector<int> phasesPerformance(4, 0);
 		
 		double generationBestFitness;
 		double xNewBestFitness;
@@ -360,6 +363,10 @@ void rsaPcenter() {
 						xNewBestFitness = calculateFitness2(xNew);
 						if (calculateFitness(i) > xNewBestFitness) {
 							// Replace itself if new solution is better.
+							if (t <= T/4) phasesPerformance.at(0) += 1;
+							else if (t <= (2*T/4) && t > T/4) phasesPerformance.at(1) += 1;
+							else if (t <= (3*T/4) && t > (2*T/4)) phasesPerformance.at(2) += 1;
+							else if (t <= T && t > (3*T/4)) phasesPerformance.at(3) += 1;
 							candidateSolution[i].clear();
 							candidateSolution[i].resize(facilities);
 							candidateSolution[i] = xNew;			
@@ -377,13 +384,15 @@ void rsaPcenter() {
 				}
 				thisBestFitTime.push_back(timestamp);
 				generationBestFitnessValues.push_back(generationBestFitness);
+				averageFitness += generationBestFitness;
 				t++;
 		}
 		cout << "\n";
 		bestFitTime.push_back(thisBestFitTime);
 		generationBestFitnesses.push_back(generationBestFitnessValues);
 		finalBests.push_back(bestSoln);
-
+		averageFitnesses.push_back(averageFitness/(T+1));
+		rsaPhasesIncrementation.push_back(phasesPerformance);
 } 
 
 double calculateES (double t) {
@@ -439,6 +448,8 @@ vector<double> calculatePercentageDifference(int currentSol, int currentDim) {
 
 void resultsToCsv() {
 	ofstream runtime(paramsFileName + "_RSA_RunTime.csv");
+	ofstream averagefitness(paramsFileName + "_RSA_AverageFitnesses.csv");
+	ofstream phasesPerformance(paramsFileName + "_RSA_PhasesPerformance.csv");
 	ofstream initBestX(paramsFileName + "_RSA_InitBestX.csv");
 	ofstream initBestY(paramsFileName + "_RSA_InitBestY.csv");
 	ofstream finalBestX(paramsFileName + "_RSA_FinalBestX.csv");
@@ -449,12 +460,12 @@ void resultsToCsv() {
 	// Output file for run time, initial best solutions, and final best solutions
 	for (int i = 0; i < runTime.size(); i++) {
 		runtime << runTime.at(i);
+		averagefitness << averageFitnesses.at(i);
 		for (int j = 0; j < finalBests.at(i).size(); j++) {
 				initBestX << fixed << initBests[i][j][0];
 				initBestY << fixed << initBests[i][j][1];
 				finalBestX << fixed << finalBests[i][j][0];
 				finalBestY << fixed << finalBests[i][j][1];
-				// printf("%f\n", initBests[i][j][0]);
 				if (j != finalBests.at(i).size()-1) {
 					initBestX << ",";
 					initBestY << ",";
@@ -462,15 +473,24 @@ void resultsToCsv() {
 					finalBestY << ",";
 				}
 		}
+
+		for (int j = 0; j < rsaPhasesIncrementation.at(i).size(); j++) {
+			phasesPerformance << rsaPhasesIncrementation.at(i).at(j);
+			if (j != rsaPhasesIncrementation.at(i).size()-1) {
+				phasesPerformance << ",";
+			}
+		}
+
 		if (i != runTime.size()-1) {
 			initBestX << "\n";
 			initBestY << "\n";
 			finalBestX << "\n";
 			finalBestY << "\n";
 			runtime << "\n";
+			phasesPerformance << "\n";
+			averagefitness << "\n";
 		}
 	}
-	// printf("%f", initBests[0][0][0]); 
 
 	// Output file for generation best fitnesses and best fitness time
 	for (int i = 0; i < bestFitTime.at(0).size(); i++) {
