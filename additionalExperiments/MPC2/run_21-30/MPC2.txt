@@ -1,0 +1,7 @@
+numberOfReptiles 50
+facilities 6
+T 2000
+numberOfRuns 10
+alpha 0.001
+beta 0.001
+dataset 2
