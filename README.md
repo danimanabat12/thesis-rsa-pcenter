@@ -13,7 +13,7 @@ University of the Philippines - Mindanao <br /> <br />
 <br /><br />**Keywords**: Reptile Search Algorithm, p-center problem, NP-hard, metaheuristics, nature-inspired algorithms, optimization
 
 ## More info about the study
-Kindly contact the researcher, Dani Manabat, for the detailed results of this study. You may contact her through the following emails: danimanabat12@gmail.com/dsmanabat@up.edu.ph
+Kindly contact the researcher, Dani Manabat, for the detailed results of this study. You may contact her through the following emails: danimanabat12@gmail.com/dsmanabat@alum.up.edu.ph
 
 ### Researcher's note: 
 Several optimization/modifications may still be implemented for the code base in order to increase readability. However, the researcher has decided to focus more on the results gathering rather than the code readability. 
